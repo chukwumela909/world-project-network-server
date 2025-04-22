@@ -11,13 +11,11 @@ const createCategory = async (req, res) => {
       .status(201)
       .json({ status: "success", message: "Category created successfully" });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        status: "error",
-        message: "Error creating category",
-        error: error.message,
-      });
+    res.status(500).json({
+      status: "error",
+      message: "Error creating category",
+      error: error.message,
+    });
   }
 };
 
@@ -27,13 +25,11 @@ const getCategories = async (req, res) => {
     const categories = await Category.find();
     res.status(200).json({ status: "success", categories });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        status: "error",
-        message: "Error fetching categories",
-        error: error.message,
-      });
+    res.status(500).json({
+      status: "error",
+      message: "Error fetching categories",
+      error: error.message,
+    });
   }
 };
 
@@ -50,13 +46,11 @@ const getCategoryById = async (req, res) => {
     }
     res.status(200).json({ status: "success", category });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        status: "error",
-        message: "Error fetching category",
-        error: error.message,
-      });
+    res.status(500).json({
+      status: "error",
+      message: "Error fetching category",
+      error: error.message,
+    });
   }
 };
 

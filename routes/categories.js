@@ -8,7 +8,7 @@ const {
 const { protectUser } = require("../middlewares/authMiddleware");
 
 // POST /api/categories
-router.post("/", protectUser, createCategory);
+router.post("/", createCategory);
 
 // GET /api/categories
 router.get("/", getCategories);
