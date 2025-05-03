@@ -8,9 +8,12 @@ const checkParams = (params) => {
   return null;
 };
 
+// Valid campaign categories
+const validCategories = ['food', 'education', 'health', 'humanity', 'environment', 'social', 'orphanage', 'startup capital', 'animals', 'disabled'];
+
 // Create a new campaign
 const createCampaign = async (req, res) => {
-  const { title, description, goalAmount, category, startDate, endDate } =
+  const { title, description, goalAmount, category, dueDate, imageUrls } =
     req.body;
   const user = req.user;
 
@@ -19,14 +22,22 @@ const createCampaign = async (req, res) => {
     description,
     goalAmount,
     category,
-    startDate,
-    endDate,
+    imageUrls,
+    dueDate,
   });
 
   if (missingField) {
     return res
       .status(400)
       .json({ status: "error", message: `${missingField} is required` });
+  }
+
+  // Validate category
+  if (!validCategories.includes(category)) {
+    return res.status(400).json({
+      status: "error",
+      message: `Invalid category: '${category}'.`
+    });
   }
 
   try {
@@ -36,8 +47,9 @@ const createCampaign = async (req, res) => {
       goalAmount,
       category,
       user: user._id,
-      startDate,
-      endDate,
+      startDate: new Date(),
+      dueDate,
+      imageUrls,
     });
 
     // Upload Image to storage and add URL
@@ -59,7 +71,6 @@ const createCampaign = async (req, res) => {
 const getCampaigns = async (req, res) => {
   try {
     const campaigns = await Campaign.find()
-      .populate("category")
       .populate("user");
     res.status(200).json({ status: "success", campaigns });
   } catch (error) {

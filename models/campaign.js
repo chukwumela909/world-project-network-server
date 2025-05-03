@@ -5,10 +5,11 @@ const CampaignSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
-      minlength: 5,
-      maxlength: 100,
     },
-    description: String,
+    description: {
+      type: String,
+      required: true,
+    },
     goalAmount: {
       type: Number,
       required: true,
@@ -19,27 +20,27 @@ const CampaignSchema = new mongoose.Schema(
       default: 0,
     },
     category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
+      type: String,
       required: true,
+      enum: ['food', 'education', 'health', 'humanity', 'environment', 'social', 'orphanage', 'startup capital', 'animals', 'disabled']
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    imageUrls: [String],
-    isActive: {
-      type: Boolean,
-      default: true,
+    imageUrls: {
+      type: [String],
+      required: true,
     },
-    isFeatured: {
-      type: Boolean,
-      default: false,
+    startDate: {
+      type: Date, 
+      required: true,
     },
-    tags: [String],
-    startDate: Date,
-    endDate: Date,
+    dueDate: {
+      type: Date,
+      required: true,
+    },
     donors: [
       {
         type: mongoose.Schema.Types.ObjectId,

@@ -13,7 +13,7 @@ router.post("/", protectUser, createDonation);
 // GET /api/donations/campaign/:campaignId
 router.get("/campaign/:campaignId", getDonationsByCampaign);
 
-// GET /api/donations/user/:userId
-router.get("/user/:userId", getUserDonations);
+// GET /api/donations/userDonations
+router.get("/userDonations",  protectUser, getUserDonations);
 
 module.exports = router;

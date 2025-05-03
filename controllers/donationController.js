@@ -2,9 +2,31 @@ const Donation = require("../models/donation");
 const Campaign = require("../models/campaign");
 const User = require("../models/user");
 
+
+// Utility to check required fields
+const checkParams = (params) => {
+  for (let key in params) {
+    if (!params[key]) return key;
+  }
+  return null;
+};
+
 // Create a donation
 const createDonation = async (req, res) => {
-  const { campaignId, amount } = req.body;
+  const { campaignId, amount, message } = req.body
+
+  const missingField = checkParams({
+    campaignId,
+    amount, 
+    message,
+  });
+
+  if (missingField) {
+    return res
+      .status(400)
+      .json({ status: "error", message: `${missingField} is required` });
+  }
+
   const user = req.user; // Extract the authenticated user from the middleware
 
   try {
@@ -16,17 +38,35 @@ const createDonation = async (req, res) => {
         .json({ status: "error", message: "Campaign not found" });
     }
 
+    // Calculate remaining amount needed to reach the goal
+    const remainingAmount = campaign.goalAmount - campaign.currentAmount;
+    
+    // Check if donation amount exceeds the remaining amount needed
+    if (Number(amount) > remainingAmount) {
+      return res.status(400).json({
+        status: "error",
+        message: `Donation amount exceeds the campaign's remaining goal. Maximum allowed donation is ${remainingAmount}.`
+      });
+    }
+
     // Create and save the donation
     const donation = new Donation({
       user: user._id,
       campaign: campaignId,
       amount,
+      message,
     });
     await donation.save();
 
 
-    // Update the campaign's total donations
-    campaign.totalDonations += amount;
+    // Update the campaign's currentAmount
+    campaign.currentAmount = Number(campaign.currentAmount) + Number(amount);
+    
+    // Add the donor to the donors array if not already there
+    if (!campaign.donors.includes(user._id)) {
+      campaign.donors.push(user._id);
+    }
+    
     await campaign.save();
 
     // Update user's wallet balance (optional feature)
@@ -70,10 +110,10 @@ const getDonationsByCampaign = async (req, res) => {
 
 // Get donations by user ID
 const getUserDonations = async (req, res) => {
-  const { userId } = req.params;
+  const user = req.user; // Extract the authenticated user from the middleware
 
   try {
-    const donations = await Donation.find({ user: userId }).populate(
+    const donations = await Donation.find({ user: user._id }).populate(
       "campaign",
       "title description"
     );

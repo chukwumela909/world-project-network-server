@@ -7,10 +7,6 @@ const userRegister = async (req, res) => {
   const {
     fullName,
     emailAddress,
-    phoneNumber,
-    country,
-    residentState,
-    address,
     password,
   } = req.body;
   try {
@@ -24,20 +20,10 @@ const userRegister = async (req, res) => {
         .json({ status: "error", message: "Email is already in use" });
     }
 
-    const existingPhoneNumber = await User.findOne({ phoneNumber });
-    if (existingPhoneNumber) {
-      return res
-        .status(400)
-        .json({ status: "error", message: "Phone number is already in use" });
-    }
 
     const user = new User({
       fullName,
       emailAddress,
-      phoneNumber,
-      country,
-      residentState,
-      address,
       password: hashedPassword,
       wallet: 0,
     });
