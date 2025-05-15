@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Campaign = require("../models/campaign");
 
 // User registration
 const userRegister = async (req, res) => {
@@ -72,12 +73,21 @@ const userLogin = async (req, res) => {
 // Get user details
 const getUser = async (req, res) => {
   try {
+    // Find campaigns created by this user
+    const campaigns = await Campaign.find({ user: req.user._id });
+    
+    // Convert user to plain object and add campaigns
+    const userWithCampaigns = {
+      ...req.user.toObject(),
+      campaigns
+    };
+
     return res
       .status(200)
       .json({
         status: "success",
         message: "User fetched successfully",
-        user: req.user,
+        user: userWithCampaigns,
       });
   } catch (error) {
     res.status(500).json({ status: "error", message: error.message });
