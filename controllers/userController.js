@@ -1,13 +1,33 @@
 const User = require("../models/user");
+const Campaign = require("../models/campaign");
 
 // Get all users
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({}, { password: 0 }); // Exclude password field
+    // Get all users, excluding password field
+    const users = await User.find({}, { password: 0 });
+    
+    // Get user campaigns and add them to the response
+    const usersWithCampaigns = await Promise.all(
+      users.map(async (user) => {
+        // Find campaigns created by this user
+        const campaigns = await Campaign.find({ user: user._id });
+        
+        // Convert Mongoose document to plain object
+        const userObj = user.toObject();
+        
+        // Add campaigns to user object
+        return {
+          ...userObj,
+          campaigns
+        };
+      })
+    );
+    
     res.status(200).json({
       status: "success",
       count: users.length,
-      users
+      users: usersWithCampaigns
     });
   } catch (error) {
     res.status(500).json({
@@ -32,9 +52,18 @@ const getUserById = async (req, res) => {
       });
     }
 
+    // Find campaigns created by this user
+    const campaigns = await Campaign.find({ user: userId });
+    
+    // Convert Mongoose document to plain object and add campaigns
+    const userWithCampaigns = {
+      ...user.toObject(),
+      campaigns
+    };
+
     res.status(200).json({
       status: "success",
-      user
+      user: userWithCampaigns
     });
   } catch (error) {
     res.status(500).json({
