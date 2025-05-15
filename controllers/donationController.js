@@ -58,7 +58,6 @@ const createDonation = async (req, res) => {
     });
     await donation.save();
 
-
     // Update the campaign's currentAmount
     campaign.currentAmount = Number(campaign.currentAmount) + Number(amount);
     
@@ -69,8 +68,15 @@ const createDonation = async (req, res) => {
     
     await campaign.save();
 
+    // Find the campaign owner and update their wallet
+    const campaignOwner = await User.findById(campaign.user);
+    if (campaignOwner) {
+      campaignOwner.wallet = Number(campaignOwner.wallet || 0) + Number(amount);
+      await campaignOwner.save();
+    }
+
     // Update user's wallet balance (optional feature)
-    user.wallet -= amount;
+    // user.wallet -= amount;
     await user.save();
 
     res
