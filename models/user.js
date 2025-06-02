@@ -10,7 +10,15 @@ const userSchema = new Schema({
   address: { type: String },
   password: { type: String, unique: true },
   wallet: { type: Number, default: 0 },
-});
+  followers: [{ 
+    type: Schema.Types.ObjectId, 
+    ref: "User" 
+  }],
+  following: [{ 
+    type: Schema.Types.ObjectId, 
+    ref: "User" 
+  }]
+}, { timestamps: true });
 
 const User = model("User", userSchema);
 

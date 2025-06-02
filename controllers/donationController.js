@@ -119,11 +119,33 @@ const getUserDonations = async (req, res) => {
   const user = req.user; // Extract the authenticated user from the middleware
 
   try {
-    const donations = await Donation.find({ user: user._id }).populate(
-      "campaign",
-      "title description"
-    );
-    res.status(200).json({ status: "success", donations });
+    const donations = await Donation.find({ user: user._id }).populate({
+      path: "campaign",
+      select: "title description user", // Include the campaign owner (user field)
+      populate: {
+        path: "user",
+        select: "fullName emailAddress" // Populate campaign owner details
+      }
+    });
+
+    // Get unique campaign owners (partners) that the user has donated to
+    const uniquePartners = new Set();
+    donations.forEach(donation => {
+      if (donation.campaign && donation.campaign.user) {
+        uniquePartners.add(donation.campaign.user._id.toString());
+      }
+    });
+
+    const numberOfPartners = uniquePartners.size;
+
+    res.status(200).json({ 
+      status: "success", 
+      data: {
+      donations,
+      numberOfPartners,
+      totalDonations: donations.length
+      }
+    });
   } catch (error) {
     res
       .status(500)
