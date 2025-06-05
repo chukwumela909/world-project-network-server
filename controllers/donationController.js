@@ -142,7 +142,7 @@ const getUserDonations = async (req, res) => {
       status: "success", 
       data: {
       donations,
-      numberOfPartners,
+      // numberOfPartners,
       totalDonations: donations.length
       }
     });
