@@ -275,6 +275,52 @@ const getUserFollowing = async (req, res) => {
   }
 };
 
+// Get current user's followers
+const getCurrentUserFollowers = async (req, res) => {
+  const user = req.user;
+  
+  try {
+    // Fetch the user with populated followers
+    const userWithFollowers = await User.findById(user._id)
+      .populate('followers', 'fullName emailAddress profileImage');
+    
+    res.status(200).json({
+      status: "success",
+      followers: userWithFollowers.followers || [],
+      count: userWithFollowers.followers ? userWithFollowers.followers.length : 0
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Error getting your followers",
+      error: error.message
+    });
+  }
+};
+
+// Get current user's following
+const getCurrentUserFollowing = async (req, res) => {
+  const user = req.user;
+  
+  try {
+    // Fetch the user with populated following
+    const userWithFollowing = await User.findById(user._id)
+      .populate('following', 'fullName emailAddress profileImage');
+    
+    res.status(200).json({
+      status: "success",
+      following: userWithFollowing.following || [],
+      count: userWithFollowing.following ? userWithFollowing.following.length : 0
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: "Error getting users you follow",
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -282,5 +328,7 @@ module.exports = {
   followUser,
   unfollowUser,
   getUserFollowers,
-  getUserFollowing
+  getUserFollowing,
+  getCurrentUserFollowers,
+  getCurrentUserFollowing
 }; 
