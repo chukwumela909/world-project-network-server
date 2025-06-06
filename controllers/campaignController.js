@@ -33,12 +33,12 @@ const createCampaign = async (req, res) => {
   }
 
   // Validate category
-  if (!validCategories.includes(category)) {
-    return res.status(400).json({
-      status: "error",
-      message: `Invalid category: '${category}'.`
-    });
-  }
+  // if (!validCategories.includes(category)) {
+  //   return res.status(400).json({
+  //     status: "error",
+  //     message: `Invalid category: '${category}'.`
+  //   });
+  // }
 
   try {
     const campaign = new Campaign({
