@@ -22,7 +22,7 @@ const CampaignSchema = new mongoose.Schema(
     category: {
       type: String,
       required: true,
-      enum: ['food', 'education', 'health', 'humanity', 'environment', 'social', 'orphanage', 'startup capital', 'animals', 'disabled', 'wildlife', 'water', 'Natural disasters', 'War disasters', 'technology']
+      enum: ['food', 'education', 'health', 'humanity', 'environment', 'social', 'orphanage', 'startup capital', 'animals', 'disabled', 'wildlife', 'water', 'natural disasters', 'war disasters', 'technology']
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,

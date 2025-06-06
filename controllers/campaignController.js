@@ -9,7 +9,7 @@ const checkParams = (params) => {
 };
 
 // Valid campaign categories
-const validCategories = ['food', 'education', 'health', 'humanity', 'environment', 'social', 'orphanage', 'startup capital', 'animals', 'disabled', 'wildlife', 'water', 'Natural disasters', 'War disasters', 'technology'];
+const validCategories = ['food', 'education', 'health', 'humanity', 'environment', 'social', 'orphanage', 'startup capital', 'animals', 'disabled', 'wildlife', 'water', 'natural disasters', 'war disasters', 'technology'];
 
 // Create a new campaign
 const createCampaign = async (req, res) => {
